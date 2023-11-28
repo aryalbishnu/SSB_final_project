@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="com.example.demo.bishnu.mapper.ProductCategoryMapper">
+
+   <select id="selectAllProductCategory" resultType="com.example.demo.bishnu.dto.ProductCategory">
+  select * from product_category
+  </select>
+  
+  <select id="selectProductCategoryById" resultType="String">
+  select categoryName from product_category where categoryId = #{categoryId}
+  </select>
+  
+  <select id="selectProductCategoryByCategoryName" resultType="String">
+  select categoryId from product_category where categoryName LIKE CONCAT('%', #{categoryName}, '%');
+  </select>
+
+
+    
+  </mapper>

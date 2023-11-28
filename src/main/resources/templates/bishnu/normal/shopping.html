@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	th:replace="bishnu/normal/index::layout(~{::section})">
+<head>
+<meta charset="UTF-8">
+<title>services</title>
+</head>
+<body>
+	<section>
+		<div class="container text-center">
+			<div class="card">
+				<div class="card-body">
+
+					<h1 class="font-weight-bold">Wel-Come to SSB Shopping Site</h1>
+					<div style="text-align: right; margin-right: 20px;">
+						<form th:action="@{/bishnu/user/orderList}" method="get">
+							<button>
+								Order List <span id="NotificationBadge" class="badge" style="background-color: #f0ad4e"
+								th:text="${addCart==0 ? '' : addCart}"></span>
+							</button>
+						</form>
+					</div>
+					<div class="shoppingUser">
+						<div th:each="product, productStat: ${productList}"
+							class="shoppingUserBox">
+
+							<div><a th:href="@{'/bishnu/user/productDetail/'+${product.id}}">
+								<img th:src="@{'/img/bishnu/product/'+${product.product_image}}"
+									style="width: 258px; height: 193px;"></a>
+							</div>
+
+							<p class="mt-2"><a th:href="@{'/bishnu/user/productDetail/'+${product.id}}">
+								<strong th:text="${product.product_name}"></strong></a>
+							</p>
+							<p th:text="${'Price : \'+ convertData.numberFormat(product.product_price)}"></p>
+							<p
+								th:class="'quant'+${product.id}" 
+								th:text="${product.product_quantity==0}?'No Stock': ${'Stock : '+ product.product_quantity}">
+							</p>
+							<p>
+								<input class="quant" type="hidden"
+									th:value="${product.product_quantity}" />
+							</p>
+<!-- 
+							<form th:action="@{'/bishnu/user/addCard/'+${product.id}}"
+								method="post"> -->
+								<button th:disabled="${product.product_quantity==0}" th:onclick="'addCartButton(' + ${product.id} + ')'"
+									th:class="'btn bg-primary btn-lg text-white mt-1 addBtn'+${product.id}">Add
+									Card</button>
+							<!-- </form> -->
+							<div class="like-container text-primary">
+								<i class="bi bi-hand-thumbs-up like-comment-share"><span
+									th:class="'like-count'+${product.id}"
+									th:if="${not #lists.isEmpty(likeds)}"
+									th:text="${likeds[__${productStat.index}__] == 0 ? '' : likeds[__${productStat.index}__]}"></span></i>
+								<span th:class="'comment-count'+${product.id}"
+									th:if="${not #lists.isEmpty(comments)}"
+									th:text="${comments[__${productStat.index}__] == 0 ? '' : comments[__${productStat.index}__]}"></span><span
+									class="like-comment-share">comments</span> <span
+									id="share-count" class="like-comment-share">shares</span>
+							</div>
+
+							<div class="like-container like-container-top"  >
+								<button type="button" th:id="'likeTextChange'+${product.id}" 
+								    th:class="${product.likeid == 0} ? 'btn btn-outline-primary' : 'btn btn-outline-secondary'"
+									th:onclick="'liked(' + ${product.id} + ',' + ${user.id} + ');'"
+									style="font-size: 12px; margin-left: 7px; margin-top: 5px;">
+									<i th:id="'likeChange'+${product.id}"  
+									th:class="${product.likeid == 0} ? 'bi-hand-thumbs-up' : 'bi-hand-thumbs-down'"></i> <span>Like</span>
+								</button>
+								<button type="button" class="btn btn-outline-primary "
+									th:onclick="'clickCommentBox(' + ${product.id} + ');'"
+									style="font-size: 12px; margin-left: 7px; margin-top: 5px;">
+									<i class="bi bi-chat"></i> <span>Comment</span>
+								</button>
+								<button type="button" class="btn btn-outline-primary "
+									style="font-size: 12px; margin-left: 7px; margin-top: 5px;">
+									<i class="bi bi-cursor"></i> <span>Share</span>
+								</button>
+							</div>
+							<div th:id="'commentBoxProduct'+${product.id}"
+								style="display: none;" class="comments">
+								<div th:class="'comment-form'+${product.id}">
+									<textarea th:class="'comment-input'+${product.id}"
+										name="comment" placeholder="Leave a comment..."></textarea>
+									<button th:data-productid="${product.id}" class="btn bg-primary"
+										th:data-user="${user}" onclick="comment(this)" type="button">Submit</button>
+								</div>
+								<div th:if="${not #lists.isEmpty(productIdByComment)}" th:each="comment: ${productIdByComment[__${productStat.index}__]}" >
+									 <div th:id="'product' +${product.id}+ 'comment' +${comment.commentid}">
+
+										<div class="comment_pic_div " th:id = "'commentBox' +${comment.commentid}">
+											<div class="comment-picture">
+												<img src="" class="comment_picture"
+													th:src="@{'/img/bishnu/'+${comment.image}}"
+													alt="profile photo" />
+											</div>
+											
+											<div class="comment-name-text" th:id = "'commentHide' +${comment.commentid}">
+												<p class="comment-name"
+													th:text="${#strings.substring(comment.first_name,0,1)}+${#strings.toLowerCase(#strings.substring(comment.first_name,1))}+ ' ' + 
+                                             ${#strings.substring(comment.last_name,0,1)}+${#strings.toLowerCase(#strings.substring(comment.last_name,1))}"></p>
+												<p class="comment-text" th:id = "'commentText' +${comment.commentid}" th:text="${comment.comment}"></p>
+											</div>
+										</div>
+										<p class="edit-delete text-primary" th:id = "'edit-delete' +${comment.commentid}">
+											<span class="time" th:classappend="${user.id == comment.userid} ? '' : (${user.role == 'ROLE_ADMIN'} ? 'textLeft_admin' : 'textLeft') "  th:text="${comment.time}"></span> 
+											<span class="edit " th:id="'productCommentEdit' + ${comment.commentid}" th:if="${user.id == comment.userid}"
+											th:onclick="'editComment(' + ${comment.commentid} + ',' + ${product.id} + ');'">edit</span>
+											<span class="delete " th:classappend="${user.id == comment.userid} ? '' : 'textRight'"
+												th:id="'productCommentDelete' + ${comment.commentid}"
+												th:if="${user.id == comment.userid or user.role == 'ROLE_ADMIN'}"
+												th:onclick="'deleteComment(' + ${comment.commentid} + ',' + ${comment.userid} + ',' + ${product.id} + ');'">delete</span>
+										</p>
+										
+										</div>
+										
+									</div>
+
+									<div th:class="'comment-list'+${product.id}" >
+
+									</div>
+									
+								
+							</div>
+
+
+						</div>
+					</div>
+				</div>
+			</div>
+			<br> <br> <br> <br> <br> <br> <br>
+			<br> <br>
+			<script>
+$(document).ready(()=>{
+    $(".item").removeClass("item");
+    $("#shopping-link").addClass("item");
+});
+
+</script>
+		</div>
+	</section>
+</body>
+</html>
