@@ -23,8 +23,9 @@
 					<!-- profile image -->
 					<div class="container text-center">
 						<img style="height: 200px; width: 200px;"
-							class="my_profile_picture"
-							th:src="@{'/img/bishnu/'+${user.image}}" alt="profile image">
+							class="my_profile_picture" 
+							th:src="${user.image == 'default.jpg'? '/img/bishnu/' + user.image : user.image}"
+							 alt="profile image">
 					</div>
 
 					<table class="table text-center">

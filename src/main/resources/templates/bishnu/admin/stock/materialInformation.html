@@ -107,11 +107,18 @@
 											th:action="@{'/bishnu/user/updateProduct/'+${product.id}}"
 											th:object="${updateProduct}" method="post">
 											<th scope="row" th:text="${product.id}"></th>
-
+                                            <!-- local enviroment get file 
 											<td><img src="" style="width: 70px; height: 70px;"
 												class="my_profile_picture"
 												th:src="@{'/img/bishnu/product/'+${product.productImage}}"
 												alt="profile photo" /></td>
+												-->
+											
+											<!-- cloud enviroment get file -->
+										    <td><img src="" style="width: 70px; height: 70px;"
+                                                class="my_profile_picture"
+                                                th:src="${product.productImage}"
+                                                alt="profile photo" /></td>
 
 											<td scope="row" th:text="${product.productName}"></td>
 

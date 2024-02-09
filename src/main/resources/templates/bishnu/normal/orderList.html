@@ -38,10 +38,23 @@
 									<tr th:each="list:${orderList}">
 										<th scope="row" th:text="${list.id}"></th>
 
-										<td><img src="" style="width: 70px; height: 70px;"
+										<td>
+										<!-- image get from local enviroment -->
+										<!--  
+										<img src="" style="width: 70px; height: 70px;"
 											class="my_profile_picture"
 											th:src="@{'/img/bishnu/product/'+${list.productImage}}"
-											alt="profile photo" /></td>
+											alt="profile photo" />
+											-->
+											
+											<!-- image get form external server -->
+											<img src="" style="width: 70px; height: 70px;"
+                                            class="my_profile_picture"
+                                            th:src="${list.productImage}"
+                                            alt="profile photo" />
+											
+											</td>
+											
 
 										<td scope="row" th:text="${list.productName}"></td>
 

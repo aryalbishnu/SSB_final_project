@@ -125,6 +125,9 @@ public class BishnuEntity {
   
   @Column(name = "image")
   private String image;
+  
+  @Column(name = "public_Id")
+  private String publicId;
 
 
 }

@@ -25,8 +25,17 @@
 							class="shoppingUserBox">
 
 							<div><a th:href="@{'/bishnu/user/productDetail/'+${product.id}}">
+								<!-- image get local enviroment 
 								<img th:src="@{'/img/bishnu/product/'+${product.product_image}}"
-									style="width: 258px; height: 193px;"></a>
+									style="width: 258px; height: 193px;">
+									-->
+									
+									<!-- image get from external server -->
+									<img th:src="${product.product_image}"
+                                    style="width: 258px; height: 193px;">
+									
+									
+									</a>
 							</div>
 
 							<p class="mt-2"><a th:href="@{'/bishnu/user/productDetail/'+${product.id}}">

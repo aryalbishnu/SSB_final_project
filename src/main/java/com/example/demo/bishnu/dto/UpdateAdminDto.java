@@ -34,5 +34,6 @@ public class UpdateAdminDto {
   private String updateTime;
   private String role;
   private String image;
+  private String publicId;
 
 }

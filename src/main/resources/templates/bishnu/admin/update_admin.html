@@ -35,7 +35,7 @@
  
   <div class="container text-center">
             <img style="width:250px; height:250px;" class="my_profile_picture" 
-            th:src="@{'/img/bishnu/'+${data.image}}">
+            th:src="${data.image == 'default.jpg' ? '/img/bishnu/'+ data.image : data.image}" >
           </div>
           <div class="custom-file">
             <input type="file" name="profileImage" /> 

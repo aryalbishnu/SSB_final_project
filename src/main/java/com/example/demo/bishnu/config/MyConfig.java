@@ -1,8 +1,12 @@
 package com.example.demo.bishnu.config;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -11,9 +15,15 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import com.cloudinary.Cloudinary;
+
 @Configuration
 @EnableWebSecurity
 public class MyConfig extends WebSecurityConfigurerAdapter{
+  
+  @Autowired
+  private Environment env; 
+  
  /* 
   @Value("${server.servlet.session.timeout}") 
   private int sessionTimeoutInSeconds;
@@ -146,7 +156,16 @@ private CustomLoginFailureHandler loginFailureHandler;
 @Autowired
 private CustomLoginSuccessHandler loginSuccessHandler;
 
-  
+// cloudinary bean creat
+@Bean
+public Cloudinary cloudinary() {
+    Map<String, Object> map = new HashMap<>();
+    map.put("cloud_name", env.getProperty("cloudinary.cloud_name"));
+    map.put("api_key", env.getProperty("cloudinary.api_key"));
+    map.put("api_secret", env.getProperty("cloudinary.api_secret"));
+    map.put("secure", true);
+    return new Cloudinary(map);
+}
 
   
 

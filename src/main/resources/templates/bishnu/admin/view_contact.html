@@ -58,7 +58,8 @@
       <th scope="row" th:text="${'2022-'+c.id}"></th>
       
        <td>
-        <img src="" class="my_profile_picture" th:src="@{'/img/bishnu/'+${c.image}}" alt="profile photo" />
+        <img src="" class="my_profile_picture" 
+        th:src="${c.image == 'default.jpg' ? '/img/bishnu/'+ c.image : c.image}" alt="profile photo" />
        <span th:text="${c.firstName + ' ' + c.lastName}"></span>
         </td>
        

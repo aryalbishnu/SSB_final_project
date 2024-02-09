@@ -1,21 +1,15 @@
 package com.example.demo.bishnu.controller;
 
-import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.UUID;
+import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -44,6 +38,7 @@ import com.example.demo.bishnu.model.LoginForm3;
 import com.example.demo.bishnu.model.RePassword;
 import com.example.demo.bishnu.repo.BishnuRepository;
 import com.example.demo.bishnu.repo.CardEntityRepo;
+import com.example.demo.bishnu.service.ImageCloudinaryService;
 
 
 @Controller
@@ -65,6 +60,9 @@ public class BishnuLoginUserController {
   
   @Autowired
   private SaleMapper saleMapper;
+  
+  @Autowired
+  private ImageCloudinaryService imageCloudinaryService;
   
   private final int _SHOW_CONTACT_PAGE_SIZE = 5;
  
@@ -122,6 +120,11 @@ public class BishnuLoginUserController {
   @GetMapping("/delete/{id}")
   public String deleteby(@PathVariable("id") int id, Model model,  HttpSession session, Principal principal) {
  BishnuEntity bishnuEntity = this.bishnuRepository.findById(id).get();
+ String imageName = bishnuEntity.getImage();
+ if(imageName != "default.jpg") {
+   String publicId = bishnuEntity.getPublicId();
+   this.imageCloudinaryService.destroy(publicId);
+ }
  try{
 CardEntity cardEntity = this.cardEntityRepo.getCardEntityByCardNumber(bishnuEntity.getCardNumber());
 this.cardEntityRepo.deleteById(cardEntity.getCardId());
@@ -157,6 +160,7 @@ e.printStackTrace();
   }
   
   //update success by update_admin page submit button return back to view_contact page
+  @SuppressWarnings("rawtypes")
   @RequestMapping(value = "/updateSuccess", params = "next", method = RequestMethod.POST)
   public String updateSuccessByAdmin(Model model, UpdateAdminDto updateAdminDto, HttpSession session,
       @RequestParam("profileImage") MultipartFile file) {
@@ -166,26 +170,34 @@ e.printStackTrace();
       
       if(!file.isEmpty()){
         String file3  = oldFile.getImage();
+        String folderName = "user";
+        Map imagePath;
        
-        if(!file3.equals("default.jpg")){
-          File deleteFile=   new ClassPathResource("static/img/bishnu").getFile();
-          File file1=new File(deleteFile, oldFile.getImage());
-          file1.delete();
+        if(file3.equals("default.jpg")){
+         // File deleteFile=   new ClassPathResource("static/img/bishnu").getFile();
+         // File file1=new File(deleteFile, oldFile.getImage());
+         // file1.delete();
+          imagePath = this.imageCloudinaryService.upload(file, folderName);
+        } else {
+          String publicId = oldFile.getPublicId();
+          imagePath = this.imageCloudinaryService.updateFile(file, folderName, publicId);
         }
         
      
-  //update new file
-        File saveFile=   new ClassPathResource("static/img/bishnu").getFile();
+       //update new file
+        //File saveFile=   new ClassPathResource("static/img/bishnu").getFile();
         
         
-        UUID uuid = UUID.randomUUID();
-        StringBuffer sb = new StringBuffer();
-        sb.append(uuid.toString());
-        sb.append(file.getOriginalFilename()); 
-        String fileName = sb.toString();
-        Path path=Paths.get(saveFile.getAbsolutePath()+File.separator+fileName);
-        Files.copy(file.getInputStream(),path , StandardCopyOption.REPLACE_EXISTING);
-        updateAdminDto.setImage(fileName);
+        //UUID uuid = UUID.randomUUID();
+        //StringBuffer sb = new StringBuffer();
+        //sb.append(uuid.toString());
+        //sb.append(file.getOriginalFilename()); 
+        //String fileName = sb.toString();
+        //Path path=Paths.get(saveFile.getAbsolutePath()+File.separator+fileName);
+        //Files.copy(file.getInputStream(),path , StandardCopyOption.REPLACE_EXISTING);
+        //updateAdminDto.setImage(fileName);
+        updateAdminDto.setImage((String)imagePath.get("secure_url"));
+        updateAdminDto.setPublicId((String)imagePath.get("public_id"));
         
       }else {
         updateAdminDto.setImage(oldFile.getImage());
@@ -295,6 +307,7 @@ e.printStackTrace();
   }
   
   //open profile page click next button from profile update page
+  @SuppressWarnings("rawtypes")
   @RequestMapping(value = "/profile/updateBy", params = "next", method = RequestMethod.POST)
   public String updateSuccess(Model model, HttpSession session, Principal principal,
       UpdateNormalDto updateNormalDto, @RequestParam("profileImage") MultipartFile file) {
@@ -304,29 +317,35 @@ e.printStackTrace();
       
       if(!file.isEmpty()) {
         String file3  = oldFile.getImage();
-        
-        if(!file3.equals("default.jpg")){
-          File deleteFile=   new ClassPathResource("static/img/bishnu").getFile();
-          File file1=new File(deleteFile, oldFile.getImage());
-          file1.delete();
+        String folderName = "user";
+        Map imagePath;
+        if(file3.equals("default.jpg")){
+          //File deleteFile=   new ClassPathResource("static/img/bishnu").getFile();
+          //File file1=new File(deleteFile, oldFile.getImage());
+          //file1.delete();
+          imagePath = this.imageCloudinaryService.upload(file, folderName);
+        } else {
+          String publicId = oldFile.getPublicId();
+          imagePath = this.imageCloudinaryService.updateFile(file, folderName, publicId);
         }
         
         //update new photo
-        File saveFile=   new ClassPathResource("static/img/bishnu").getFile();
-        UUID uuid = UUID.randomUUID();
-        StringBuffer sb = new StringBuffer();
-        sb.append(uuid.toString());
-        sb.append(file.getOriginalFilename()); 
-        String fileName = sb.toString();
-        Path path=Paths.get(saveFile.getAbsolutePath()+File.separator+fileName);
-        Files.copy(file.getInputStream(),path , StandardCopyOption.REPLACE_EXISTING);
-        updateNormalDto.setImage(fileName);
+       // File saveFile=   new ClassPathResource("static/img/bishnu").getFile();
+        //UUID uuid = UUID.randomUUID();
+        //StringBuffer sb = new StringBuffer();
+        //sb.append(uuid.toString());
+        //sb.append(file.getOriginalFilename()); 
+       // String fileName = sb.toString();
+       // Path path=Paths.get(saveFile.getAbsolutePath()+File.separator+fileName);
+       // Files.copy(file.getInputStream(),path , StandardCopyOption.REPLACE_EXISTING);
+        updateNormalDto.setImage((String)imagePath.get("secure_url"));
+        updateNormalDto.setPublicId((String)imagePath.get("public_id"));        
       }else {
         updateNormalDto.setImage(oldFile.getImage());
       }
     model.addAttribute("title", "profile_page");
     String userName = principal.getName();
-   BishnuEntity user=this.bishnuRepository.getUserByUserName(userName);
+    BishnuEntity user=this.bishnuRepository.getUserByUserName(userName);
     model.addAttribute("data", user);
     LocalDateTime date = LocalDateTime.now();
     DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");

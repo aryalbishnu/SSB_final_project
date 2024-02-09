@@ -270,7 +270,7 @@ public class AdminStockController {
       session.setAttribute("message", new Message("画像を選択してください。..... ", "danger"));
       return "redirect:/bishnu/user/materialInformation"; 
     }
-  
+    
     this.productService.addProductMethod(addProduct, file, productUserId);
     model.addAttribute("title", "materialInformation");
     session.setAttribute("message", new Message("SuccessFully add your product..... ", "success"));

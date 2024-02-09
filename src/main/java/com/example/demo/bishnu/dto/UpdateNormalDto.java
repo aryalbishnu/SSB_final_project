@@ -33,5 +33,6 @@ public class UpdateNormalDto {
   private String licenseNumber;
   private String updateTime;
   private String image;
+  private String publicId;
 
 }

@@ -31,6 +31,9 @@ public class ProductEntity {
   @Column(name = "product_Image")
   private String productImage;
   
+  @Column(name = "public_Id")
+  private String publicId;
+  
   @Column(name = "product_Brand")
   private String productBrand;
   
