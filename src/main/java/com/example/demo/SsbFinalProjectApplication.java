@@ -12,7 +12,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
 @EnableScheduling
-public class SsbFinalProjectApplication implements CommandLineRunner {
+public class SsbFinalProjectApplication implements CommandLineRunner  {
 
 	public static void main(String[] args) throws IOException {
 		SpringApplication.run(SsbFinalProjectApplication.class, args);
@@ -34,6 +34,7 @@ public class SsbFinalProjectApplication implements CommandLineRunner {
 		Runtime rt = Runtime.getRuntime();
 		rt.exec("rundll32 url.dll,FileProtocolHandler " + "http://localhost:8080");
 	}
+	
 
 }
 
