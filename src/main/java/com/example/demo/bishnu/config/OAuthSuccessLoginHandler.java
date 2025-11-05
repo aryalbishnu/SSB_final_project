@@ -36,23 +36,14 @@ public class OAuthSuccessLoginHandler extends  SimpleUrlAuthenticationSuccessHan
       Authentication authentication) throws IOException, ServletException {
 
     DefaultOAuth2User userDetails =  (DefaultOAuth2User) authentication.getPrincipal();
-    String email = userDetails.getAttribute("email").toString();
+    String email = userDetails.getAttribute("email");
 
-    // Check if user exists in database
-    BishnuEntity bishnuEntity = userServices.getByEmail(email);
+    // User validation is done in CustomOAuth2UserService
+    // If we reach here, user exists in database with proper role
+    logger.info("Google OAuth login successful for user: " + email);
 
-    // Only allow login if user exists in database
-    if (bishnuEntity != null) {
-      // User exists - allow login
-      logger.info("Google OAuth login successful for existing user: " + email);
-      super.setDefaultTargetUrl("/bishnu/user/dologin");
-      super.onAuthenticationSuccess(request, response, authentication);
-    } else {
-      // User does not exist - redirect to login with error message
-      logger.warn("Google OAuth login failed - user not found in database: " + email);
-      request.getSession().setAttribute("error", "This Gmail account is not registered. Please sign up first or contact administrator.");
-      response.sendRedirect("/bishnu/loginForm?oauth_error=not_registered");
-    }
+    super.setDefaultTargetUrl("/bishnu/user/dologin");
+    super.onAuthenticationSuccess(request, response, authentication);
 }
  
 }
