@@ -154,8 +154,7 @@ private OAuthSuccessLoginHandler oAuthSuccessLoginHandler;
     .oauth2Login(oauth2Login ->
         oauth2Login
             .loginPage("/bishnu/loginForm") // Same login page for both form and OAuth2
-            .defaultSuccessUrl("/bishnu/user/dologin") // Redirect after successful OAuth2 login
-            //.successHandler(oAuthSuccessLoginHandler) // Custom success handler
+            .successHandler(oAuthSuccessLoginHandler) // Custom success handler
             .failureUrl("/bishnu/loginForm?error") // Redirect after OAuth2 login failure
     )
     //.oauth2Login(Customizer.withDefaults())

@@ -37,30 +37,22 @@ public class OAuthSuccessLoginHandler extends  SimpleUrlAuthenticationSuccessHan
 
     DefaultOAuth2User userDetails =  (DefaultOAuth2User) authentication.getPrincipal();
     String email = userDetails.getAttribute("email").toString();
-    String firstName = userDetails.getAttribute("given_name").toString();
-    String lastName = userDetails.getAttribute("family_name").toString();
-    String picture = userDetails.getAttribute("picture").toString();
 
-    BishnuEntity user =  new BishnuEntity();
+    // Check if user exists in database
     BishnuEntity bishnuEntity = userServices.getByEmail(email);
-    
-    // if user is not exit
-    if (bishnuEntity == null) {
-      user.setEmail(email);
-      user.setFirstName(firstName);
-      user.setLastName(lastName);
-      user.setRole("NORMAL");
-      user.setImage(picture);
-      request.getSession().setAttribute("bishnuDto", user);
-      super.setDefaultTargetUrl("/bishnu/otpSend");
-      super.onAuthenticationSuccess(request, response, authentication);
-    } else {
+
+    // Only allow login if user exists in database
+    if (bishnuEntity != null) {
+      // User exists - allow login
+      logger.info("Google OAuth login successful for existing user: " + email);
       super.setDefaultTargetUrl("/bishnu/user/dologin");
       super.onAuthenticationSuccess(request, response, authentication);
+    } else {
+      // User does not exist - redirect to login with error message
+      logger.warn("Google OAuth login failed - user not found in database: " + email);
+      request.getSession().setAttribute("error", "This Gmail account is not registered. Please sign up first or contact administrator.");
+      response.sendRedirect("/bishnu/loginForm?oauth_error=not_registered");
     }
-
-
-    
 }
  
 }
