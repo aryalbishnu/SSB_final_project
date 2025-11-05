@@ -116,7 +116,7 @@ private CustomOAuth2FailureHandler oAuth2FailureHandler;
           .authorizeRequests(authorizeRequests ->
               authorizeRequests
                   .antMatchers("/bishnu/user/admin/**").hasRole("ADMIN")
-                  .antMatchers("/bishnu/user/**").access("hasRole('ROLE_NORMAL') or hasRole('ROLE_ADMIN')")
+                  .antMatchers("/bishnu/user/**").access("hasRole('NORMAL') or hasRole('ADMIN')")
                   .antMatchers("/**").permitAll()
           )
           .formLogin(withDefaults())
@@ -146,7 +146,7 @@ private CustomOAuth2FailureHandler oAuth2FailureHandler;
     .authorizeRequests(authorizeRequests ->
         authorizeRequests
             .antMatchers("/bishnu/user/admin/**").hasRole("ADMIN")
-            .antMatchers("/bishnu/user/**").access("hasRole('ROLE_NORMAL') or hasRole('ROLE_ADMIN')")
+            .antMatchers("/bishnu/user/**").access("hasRole('NORMAL') or hasRole('ADMIN')")
             .antMatchers("/**").permitAll()
     )
     .formLogin(formLogin ->
