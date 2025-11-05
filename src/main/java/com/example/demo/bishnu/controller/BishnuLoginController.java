@@ -1,6 +1,5 @@
 package com.example.demo.bishnu.controller;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.modelmapper.ModelMapper;
@@ -54,19 +53,7 @@ public class BishnuLoginController {
   //common message throw 
    CommonMessage commonMessage= new CommonMessage();
    
-   private static final int SESSION_TIMEOUT_SECONDS = 5;
-
-
-  //Choose card page open
-  @RequireSessionTimeoutCheck 
-  @PostMapping("/chooseCard")
-  public String cardChoose(ChooseCard chooseCard, BishnuDto bishnuDto, HttpServletRequest request, Model model) {
-
-      model.addAttribute("title", "SSB_Card_Choose");
-      this.modelMapper.map(bishnuDto, chooseCard);
-      return "login/chooseCard";  
-    }
-  
+   private static final int SESSION_TIMEOUT_SECONDS = 5; 
   
   //login Page1 open
   @RequireSessionTimeoutCheck

@@ -43,9 +43,14 @@
                             </div>
                             
                             <div class="container text-end">
-                            <a th:href="@{/bishnu/otpSend}">Forgot Password</a>
+                                <a th:href="@{/bishnu/otpSend}">Forgot Password</a>
                             </div>
                         </form>
+                        
+                        <div class="d-flex justify-content-around align-items-center mt-3">
+                            <a th:href="@{/oauth2/authorization/google}" class="btn btn-primary btn-lg active">Login with Google</a>
+                            <a th:href="@{/oauth2/authorization/github}" class="btn btn-primary btn-lg active">Login with GitHub</a>
+                        </div>
                     </div>
                 </div>
             </div>

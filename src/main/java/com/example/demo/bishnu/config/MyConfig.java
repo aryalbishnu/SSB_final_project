@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -23,6 +24,16 @@ public class MyConfig extends WebSecurityConfigurerAdapter{
   
   @Autowired
   private Environment env; 
+  
+  
+@Autowired
+private CustomLoginFailureHandler loginFailureHandler;
+
+@Autowired
+private CustomLoginSuccessHandler loginSuccessHandler;
+
+@Autowired
+private OAuthSuccessLoginHandler oAuthSuccessLoginHandler;
   
  /* 
   @Value("${server.servlet.session.timeout}") 
@@ -125,36 +136,37 @@ public class MyConfig extends WebSecurityConfigurerAdapter{
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
-  http.authorizeRequests().antMatchers("/bishnu/user/admin/**").hasRole("ADMIN")
-  .antMatchers("/bishnu/user/**").access("hasRole('ROLE_NORMAL') or hasRole('ROLE_ADMIN')")
-//.antMatchers("/bishnu/user/**").hasAnyRole("ADMIN", "NORMAL")
-  //.antMatchers("/bishnu/user/**").hasRole("NORMAL")
-  //.antMatchers("/bishnu/user/**").hasRole("ADMIN")
- .antMatchers("/**").permitAll().and().formLogin()
-
-  .loginPage("/bishnu/loginForm")
-  .loginProcessingUrl("/dologin") 
-  //.defaultSuccessUrl("/bishnu/user/dologin")
-  .failureHandler(loginFailureHandler)
-  .successHandler(loginSuccessHandler)  
-  .usernameParameter("username")
-  .and()
-  .sessionManagement(sessionManagement ->
-  sessionManagement.maximumSessions(1)
-  .expiredUrl("/bishnu/loginForm?error")
-  .maxSessionsPreventsLogin(true)
-)
-
-.csrf().disable();
-
-  }
-
-  
-@Autowired
-private CustomLoginFailureHandler loginFailureHandler;
-
-@Autowired
-private CustomLoginSuccessHandler loginSuccessHandler;
+    http
+    .authorizeRequests(authorizeRequests ->
+        authorizeRequests
+            .antMatchers("/bishnu/user/admin/**").hasRole("ADMIN")
+            .antMatchers("/bishnu/user/**").access("hasRole('ROLE_NORMAL') or hasRole('ROLE_ADMIN')")
+            .antMatchers("/**").permitAll()
+    )
+    .formLogin(formLogin ->
+        formLogin
+            .loginPage("/bishnu/loginForm")
+            .loginProcessingUrl("/dologin")
+            .failureHandler(loginFailureHandler) // Custom failure handler
+            .successHandler(loginSuccessHandler) // Custom success handler
+            .usernameParameter("username")
+    )
+    .oauth2Login(oauth2Login ->
+        oauth2Login
+            .loginPage("/bishnu/loginForm") // Same login page for both form and OAuth2
+            .defaultSuccessUrl("/bishnu/user/dologin") // Redirect after successful OAuth2 login
+            //.successHandler(oAuthSuccessLoginHandler) // Custom success handler
+            .failureUrl("/bishnu/loginForm?error") // Redirect after OAuth2 login failure
+    )
+    //.oauth2Login(Customizer.withDefaults())
+    .sessionManagement(sessionManagement ->
+        sessionManagement
+            .maximumSessions(1)
+            .expiredUrl("/bishnu/loginForm?error")
+            .maxSessionsPreventsLogin(true)
+    )
+    .csrf(AbstractHttpConfigurer::disable); // Disables CSRF protection if not needed
+}
 
 // cloudinary bean creat
 @Bean
