@@ -166,7 +166,7 @@ private CustomOAuth2UserService customOAuth2UserService;
         sessionManagement
             .maximumSessions(1)
             .expiredUrl("/bishnu/loginForm?error")
-            .maxSessionsPreventsLogin(true)
+            .maxSessionsPreventsLogin(false) // Allow new login to invalidate old session
     )
     .csrf(AbstractHttpConfigurer::disable); // Disables CSRF protection if not needed
 }
