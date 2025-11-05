@@ -34,6 +34,9 @@ private CustomLoginSuccessHandler loginSuccessHandler;
 
 @Autowired
 private OAuthSuccessLoginHandler oAuthSuccessLoginHandler;
+
+@Autowired
+private CustomOAuth2UserService customOAuth2UserService;
   
  /* 
   @Value("${server.servlet.session.timeout}") 
@@ -154,6 +157,7 @@ private OAuthSuccessLoginHandler oAuthSuccessLoginHandler;
     .oauth2Login(oauth2Login ->
         oauth2Login
             .loginPage("/bishnu/loginForm") // Same login page for both form and OAuth2
+            .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService)) // Custom OAuth2 user service
             .successHandler(oAuthSuccessLoginHandler) // Custom success handler
             .failureUrl("/bishnu/loginForm?error") // Redirect after OAuth2 login failure
     )
